@@ -1,22 +1,20 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
+
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
  * TODO Sprint add-controllers.
  */
-
 @Data
-public class Item {
+public class User {
     private Integer id;
     @NotBlank
     private String name;
-    @NotBlank
-    private String description;
     @NotNull
-    private Boolean available;
-    private Integer ownerId;
-
+    @Email
+    private String email;
 }
