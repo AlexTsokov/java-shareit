@@ -8,7 +8,20 @@ import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    Map<Integer, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
+
+    private Integer userId = 0;
+
+    @Override
+    public Integer getUserId() {
+        return userId;
+    }
+
+    @Override
+    public Integer setUserId() {
+        userId++;
+        return userId;
+    }
 
     @Override
     public User createUser(User user) {
@@ -22,13 +35,12 @@ public class InMemoryUserStorage implements UserStorage {
         if (userForUpdate == null) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        if (user.getName() != null) {
+        if (user.getName() != null && !user.getName().isBlank()) {
             userForUpdate.setName(user.getName());
         }
-        if (user.getEmail() != null) {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
             userForUpdate.setEmail(user.getEmail());
         }
-        users.put(userForUpdate.getId(), userForUpdate);
         return userForUpdate;
     }
 
@@ -50,7 +62,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public boolean checkUniqueOfEmail(Integer id, String email) {
         for (User user : users.values()) {
-            if (user.getEmail().equals(email) && (int)user.getId() != id) {
+            if (user.getEmail().equals(email) && (int) user.getId() != id) {
                 return false;
             }
         }

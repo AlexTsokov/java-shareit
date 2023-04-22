@@ -18,4 +18,8 @@ public interface UserStorage {
     void deleteUser(Integer id);
 
     boolean checkUniqueOfEmail(Integer id, String email);
+
+    Integer setUserId();
+
+    Integer getUserId();
 }

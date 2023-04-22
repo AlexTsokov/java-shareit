@@ -15,5 +15,5 @@ public interface ItemService {
 
     List<Item> searchItems(String text);
 
-    void checkOwner(Integer userId, Integer itemId);
+    boolean checkIfItemOwner(Integer userId, Integer itemId);
 }

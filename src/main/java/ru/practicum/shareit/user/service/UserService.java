@@ -15,5 +15,7 @@ public interface UserService {
 
     void deleteUser(Integer id);
 
-    void checkUser(Integer userId);
+    boolean checkUserExist(Integer userId);
+
+    boolean validate(User user);
 }

@@ -9,7 +9,19 @@ import java.util.*;
 @Component
 public class InMemoryItemStorage implements ItemStorage {
 
-    Map<Integer, Item> items = new HashMap<>();
+    private final Map<Integer, Item> items = new HashMap<>();
+    private Integer itemId = 0;
+
+    @Override
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    @Override
+    public Integer setItemId() {
+        itemId++;
+        return itemId;
+    }
 
     @Override
     public Item createItem(Item item) {
@@ -23,16 +35,15 @@ public class InMemoryItemStorage implements ItemStorage {
         if (itemForUpdate == null) {
             throw new ItemNotFoundException("Вещь не найдена");
         }
-        if (item.getName() != null) {
+        if (item.getName() != null && !item.getName().isBlank()) {
             itemForUpdate.setName(item.getName());
         }
-        if (item.getDescription() != null) {
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
             itemForUpdate.setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
             itemForUpdate.setAvailable(item.getAvailable());
         }
-        items.put(itemForUpdate.getId(), itemForUpdate);
         return itemForUpdate;
     }
 
@@ -45,7 +56,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> findItemsByUser(Integer userId) {
         List<Item> userItemsList = new ArrayList<>();
         for (Item item : items.values()) {
-            if ((int)item.getOwnerId() == userId) {
+            if ((int) item.getOwnerId() == userId) {
                 userItemsList.add(item);
             }
         }

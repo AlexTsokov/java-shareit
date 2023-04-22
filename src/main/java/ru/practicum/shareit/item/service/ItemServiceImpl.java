@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.item.validation.ItemValidator;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,7 +17,6 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemStorage itemStorage;
     private final ItemValidator itemValidator;
-    private Integer itemId = 0;
 
     public ItemServiceImpl(ItemStorage itemStorage, ItemValidator itemValidator) {
         this.itemStorage = itemStorage;
@@ -29,8 +28,8 @@ public class ItemServiceImpl implements ItemService {
         if (!itemValidator.validate(item)) {
             throw new ValidationException("Валидация вещи не пройдена");
         }
-        itemId++;
-        item.setId(itemId);
+        itemStorage.setItemId();
+        item.setId(itemStorage.getItemId());
         item.setOwnerId(userId);
         log.info("Вещь добавлена");
         return itemStorage.createItem(item);
@@ -61,14 +60,11 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> searchItems(String text) {
         if (!text.isEmpty())
             return itemStorage.searchItems(text);
-        else return new ArrayList<>(); // делал с ItemNotFoundException, но тесту нужен именно пустой список
+        else return Collections.emptyList();
     }
 
-    @Override
-    public void checkOwner(Integer userId, Integer itemId) {
+    public boolean checkIfItemOwner(Integer userId, Integer itemId) {
         Item item = findItemById(itemId);
-        if ((int)item.getOwnerId() != userId) {
-            throw new ItemNotFoundException("У пользователя нет такого предмета");
-        }
+        return (int)item.getOwnerId() == userId;
     }
 }

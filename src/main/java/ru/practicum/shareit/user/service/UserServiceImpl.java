@@ -18,7 +18,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
     private final UserValidator userValidator;
-    private Integer userId = 0;
 
     @Autowired
     public UserServiceImpl(UserStorage userStorage, UserValidator userValidator) {
@@ -34,8 +33,8 @@ public class UserServiceImpl implements UserService {
         if (!userStorage.checkUniqueOfEmail(user.getId(), user.getEmail())) {
             throw new EmailException("Почта уже существует");
         }
-        userId++;
-        user.setId(userId);
+        userStorage.setUserId();
+        user.setId(userStorage.getUserId());
         log.info("Пользователь добавлен");
         return userStorage.createUser(user);
     }
@@ -72,12 +71,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void checkUser(Integer userId) {
-        if (userId == null) {
-            throw new UserValidationException("Пользователь не найден");
-        }
-        if (userStorage.findUserById(userId).isEmpty()) {
-            throw new UserNotFoundException("Пользователь не найден");
-        }
+    public boolean checkUserExist(Integer userId) {
+        return (userId != null && userStorage.findUserById(userId).isPresent());
+    }
+
+    @Override
+    public boolean validate(User user) {
+        return userValidator.validate(user);
     }
 }

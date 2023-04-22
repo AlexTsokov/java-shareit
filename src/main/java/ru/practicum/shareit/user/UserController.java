@@ -1,16 +1,16 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @RestController
 @RequestMapping("/users")
@@ -18,28 +18,31 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto user) {
+        if (userService.validate(UserMapper.toUser(user))) {
+            return new ResponseEntity<>(UserMapper.toUserDto
+                    (userService.createUser(UserMapper.toUser(user))), HttpStatus.OK);
+        } else return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
     }
 
     @PatchMapping("/{id}")
-    public User update(@NotNull @PathVariable Integer id, @RequestBody User user) {
-        return userService.changeUser(id, user);
+    public UserDto update(@NotNull @PathVariable Integer id, @RequestBody UserDto user) {
+        return UserMapper.toUserDto(userService.changeUser(id, UserMapper.toUser(user)));
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDto> getAllUsers() {
+        return UserMapper.toDtoList(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public User getUser(@NotNull @PathVariable Integer id) {
-        return userService.findUserById(id);
+    public UserDto getUser(@NotNull @PathVariable Integer id) {
+        return UserMapper.toUserDto(userService.findUserById(id));
     }
 
     @DeleteMapping("/{id}")
