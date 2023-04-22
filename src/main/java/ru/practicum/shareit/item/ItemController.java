@@ -38,8 +38,7 @@ public class ItemController {
                                           @PathVariable Integer itemId,
                                           @RequestBody ItemDto itemDto) {
         if (userService.checkUserExist(userId) && itemService.checkIfItemOwner(userId, itemId)) {
-            return new ResponseEntity<>(ItemMapper.toItemDto(itemService.updateItem
-                    (userId, itemId, ItemMapper.toItem(itemDto))), HttpStatus.OK);
+            return new ResponseEntity<>(ItemMapper.toItemDto(itemService.updateItem(userId, itemId, ItemMapper.toItem(itemDto))), HttpStatus.OK);
         } else return new ResponseEntity<>(itemDto, HttpStatus.NOT_FOUND);
     }
 

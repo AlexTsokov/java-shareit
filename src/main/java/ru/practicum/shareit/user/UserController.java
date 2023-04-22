@@ -25,8 +25,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody UserDto user) {
         if (userService.validate(UserMapper.toUser(user))) {
-            return new ResponseEntity<>(UserMapper.toUserDto
-                    (userService.createUser(UserMapper.toUser(user))), HttpStatus.OK);
+            return new ResponseEntity<>(UserMapper.toUserDto(userService.createUser(UserMapper.toUser(user))), HttpStatus.OK);
         } else return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
     }
 
