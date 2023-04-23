@@ -11,9 +11,9 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class UserDto {
     private Integer id;
-    @NotBlank
+    @NotBlank(groups = {Create.class})
     private String name;
-    @NotEmpty
-    @Email
+    @NotEmpty(groups = {Create.class})
+    @Email(groups = {Create.class, Update.class})
     private String email;
 }

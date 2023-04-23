@@ -3,12 +3,10 @@ package ru.practicum.shareit.user.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.exception.EmailException;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.UserValidationException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
-import ru.practicum.shareit.user.validation.UserValidator;
 
 import java.util.List;
 
@@ -17,19 +15,14 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
-    private final UserValidator userValidator;
 
     @Autowired
-    public UserServiceImpl(UserStorage userStorage, UserValidator userValidator) {
+    public UserServiceImpl(UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.userValidator = userValidator;
     }
 
     @Override
     public User createUser(User user) {
-        if (!userValidator.validate(user)) {
-            throw new UserValidationException("Валидация пользователя не пройдена");
-        }
         if (!userStorage.checkUniqueOfEmail(user.getId(), user.getEmail())) {
             throw new EmailException("Почта уже существует");
         }
@@ -44,7 +37,7 @@ public class UserServiceImpl implements UserService {
         user.setId(id);
         if (user.getEmail() != null) {
             if (!userStorage.checkUniqueOfEmail(id, user.getEmail())) {
-                throw new EmailException("Почта уже существует");
+                throw new EmailException("Почта " + user.getEmail() + " уже существует");
             }
         }
         log.info("Пользователь обновлен");
@@ -59,7 +52,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserById(Integer id) {
         if (userStorage.findUserById(id).isEmpty()) {
-            throw new UserNotFoundException("Пользователь не найден");
+            throw new EntityNotFoundException("Пользователь не найден");
         }
         return userStorage.findUserById(id).get();
     }
@@ -75,8 +68,4 @@ public class UserServiceImpl implements UserService {
         return (userId != null && userStorage.findUserById(userId).isPresent());
     }
 
-    @Override
-    public boolean validate(User user) {
-        return userValidator.validate(user);
-    }
 }

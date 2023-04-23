@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User changeUser(User user) {
         User userForUpdate = users.get(user.getId());
         if (userForUpdate == null) {
-            throw new UserNotFoundException("Пользователь не найден");
+            throw new EntityNotFoundException("Пользователь не найден");
         }
         if (user.getName() != null && !user.getName().isBlank()) {
             userForUpdate.setName(user.getName());

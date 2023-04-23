@@ -17,5 +17,4 @@ public interface UserService {
 
     boolean checkUserExist(Integer userId);
 
-    boolean validate(User user);
 }

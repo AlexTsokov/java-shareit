@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -33,7 +33,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item changeItem(Item item) {
         Item itemForUpdate = items.get(item.getId());
         if (itemForUpdate == null) {
-            throw new ItemNotFoundException("Вещь не найдена");
+            throw new EntityNotFoundException("Вещь не найдена");
         }
         if (item.getName() != null && !item.getName().isBlank()) {
             itemForUpdate.setName(item.getName());
@@ -56,7 +56,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> findItemsByUser(Integer userId) {
         List<Item> userItemsList = new ArrayList<>();
         for (Item item : items.values()) {
-            if ((int) item.getOwnerId() == userId) {
+            if (item.getOwnerId().equals(userId)) {
                 userItemsList.add(item);
             }
         }

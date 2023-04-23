@@ -8,7 +8,7 @@ import java.util.List;
 
 @UtilityClass
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         ItemDto dto = new ItemDto();
         dto.setId(item.getId());
         dto.setName(item.getName());
@@ -17,7 +17,7 @@ public class ItemMapper {
         return dto;
     }
 
-    public static Item toItem(ItemDto dto) {
+    public Item toItem(ItemDto dto) {
         Item item = new Item();
         item.setId(dto.getId());
         item.setName(dto.getName());
@@ -26,7 +26,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static List<ItemDto> toDtoList(List<Item> items) {
+    public List<ItemDto> toDtoList(List<Item> items) {
         List<ItemDto> dtoList = new ArrayList<>();
         for (Item item : items) {
             dtoList.add(toItemDto(item));
