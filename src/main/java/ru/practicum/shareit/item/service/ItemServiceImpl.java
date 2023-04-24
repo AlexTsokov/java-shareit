@@ -26,8 +26,6 @@ public class ItemServiceImpl implements ItemService {
     public Item createItem(Integer userId, Item item) {
         if (!userService.checkUserExist(userId))
             throw new EntityNotFoundException("Не найден");
-        itemStorage.setItemId();
-        item.setId(itemStorage.getItemId());
         item.setOwnerId(userId);
         log.info("Вещь добавлена");
         return itemStorage.createItem(item);
@@ -36,10 +34,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(Integer userId, Integer itemId, Item item) {
         if (userService.checkUserExist(userId) && checkIfItemOwner(userId, itemId)) {
-            item.setId(itemId);
             item.setOwnerId(userId);
             log.info("Вещь обновлена");
-            return itemStorage.changeItem(item);
+            return itemStorage.changeItem(item, itemId);
         } else throw new EntityNotFoundException("Пользователь данной вещи не найден");
     }
 
@@ -58,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> searchItems(String text) {
-        if (!text.isEmpty())
+        if (!text.isBlank())
             return itemStorage.searchItems(text);
         else return Collections.emptyList();
     }

@@ -13,11 +13,6 @@ public class InMemoryUserStorage implements UserStorage {
     private Integer userId = 0;
 
     @Override
-    public Integer getUserId() {
-        return userId;
-    }
-
-    @Override
     public Integer setUserId() {
         userId++;
         return userId;
@@ -25,12 +20,14 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
+        user.setId(setUserId());
         users.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public User changeUser(User user) {
+    public User changeUser(Integer id, User user) {
+        user.setId(id);
         User userForUpdate = users.get(user.getId());
         if (userForUpdate == null) {
             throw new EntityNotFoundException("Пользователь не найден");
@@ -63,6 +60,16 @@ public class InMemoryUserStorage implements UserStorage {
     public boolean checkUniqueOfEmail(Integer id, String email) {
         for (User user : users.values()) {
             if (user.getEmail().equals(email) && (int) user.getId() != id) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkUniqueOfEmailOfNewUser(String email) {
+        for (User user : users.values()) {
+            if (user.getEmail().equals(email)) {
                 return false;
             }
         }

@@ -23,25 +23,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        if (!userStorage.checkUniqueOfEmail(user.getId(), user.getEmail())) {
+        if (!userStorage.checkUniqueOfEmailOfNewUser(user.getEmail())) {
             throw new EmailException("Почта уже существует");
         }
-        userStorage.setUserId();
-        user.setId(userStorage.getUserId());
         log.info("Пользователь добавлен");
         return userStorage.createUser(user);
     }
 
     @Override
     public User changeUser(Integer id, User user) {
-        user.setId(id);
         if (user.getEmail() != null) {
             if (!userStorage.checkUniqueOfEmail(id, user.getEmail())) {
                 throw new EmailException("Почта " + user.getEmail() + " уже существует");
             }
         }
         log.info("Пользователь обновлен");
-        return userStorage.changeUser(user);
+        return userStorage.changeUser(id, user);
     }
 
     @Override

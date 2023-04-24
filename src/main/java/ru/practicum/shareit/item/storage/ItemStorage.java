@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ItemStorage {
     Item createItem(Item item);
 
-    Item changeItem(Item item);
+    Item changeItem(Item item, Integer id);
 
     Optional<Item> findItemById(Integer id);
 
@@ -18,6 +18,5 @@ public interface ItemStorage {
 
     Integer setItemId();
 
-    Integer getItemId();
 }
 

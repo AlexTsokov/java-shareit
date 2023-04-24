@@ -9,7 +9,7 @@ public interface UserStorage {
 
     User createUser(User user);
 
-    User changeUser(User user);
+    User changeUser(Integer id, User user);
 
     List<User> getAllUsers();
 
@@ -19,7 +19,7 @@ public interface UserStorage {
 
     boolean checkUniqueOfEmail(Integer id, String email);
 
-    Integer setUserId();
+    boolean checkUniqueOfEmailOfNewUser(String email);
 
-    Integer getUserId();
+    Integer setUserId();
 }

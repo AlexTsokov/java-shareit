@@ -13,11 +13,6 @@ public class InMemoryItemStorage implements ItemStorage {
     private Integer itemId = 0;
 
     @Override
-    public Integer getItemId() {
-        return itemId;
-    }
-
-    @Override
     public Integer setItemId() {
         itemId++;
         return itemId;
@@ -25,12 +20,14 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public Item createItem(Item item) {
+        item.setId(setItemId());
         items.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item changeItem(Item item) {
+    public Item changeItem(Item item, Integer id) {
+        item.setId(id);
         Item itemForUpdate = items.get(item.getId());
         if (itemForUpdate == null) {
             throw new EntityNotFoundException("Вещь не найдена");
