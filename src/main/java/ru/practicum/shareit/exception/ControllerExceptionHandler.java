@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Arrays;
 import java.util.Date;
 
 @RestControllerAdvice
@@ -22,7 +23,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Объект не найден");
+        log.error("Объект не найден " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -34,7 +35,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Адрес почты не уникален");
+        log.error("Адрес почты не уникален " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -46,7 +47,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Введены некорректные данные");
+        log.error("Введены некорректные данные " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -58,7 +59,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Не указан пользователь вещи");
+        log.error("Не указан пользователь вещи " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 }
