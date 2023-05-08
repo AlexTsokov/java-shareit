@@ -9,17 +9,17 @@ public interface UserStorage {
 
     User createUser(User user);
 
-    User changeUser(Integer id, User user);
+    User changeUser(Long id, User user);
 
     List<User> getAllUsers();
 
-    Optional<User> findUserById(Integer id);
+    Optional<User> findUserById(Long id);
 
-    void deleteUser(Integer id);
+    void deleteUser(Long id);
 
-    boolean checkUniqueOfEmail(Integer id, String email);
+//    boolean checkUniqueOfEmail(Integer id, String email);
+//
+//    boolean checkUniqueOfEmailOfNewUser(String email);
 
-    boolean checkUniqueOfEmailOfNewUser(String email);
-
-    Integer setUserId();
+    Long setUserId();
 }

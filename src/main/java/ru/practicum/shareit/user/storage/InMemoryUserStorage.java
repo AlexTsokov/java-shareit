@@ -8,12 +8,11 @@ import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
-
-    private Integer userId = 0;
+    private final Map<Long, User> users = new HashMap<>();
+    private long userId = 0;
 
     @Override
-    public Integer setUserId() {
+    public Long setUserId() {
         userId++;
         return userId;
     }
@@ -26,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User changeUser(Integer id, User user) {
+    public User changeUser(Long id, User user) {
         user.setId(id);
         User userForUpdate = users.get(user.getId());
         if (userForUpdate == null) {
@@ -47,32 +46,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> findUserById(Integer id) {
+    public Optional<User> findUserById(Long id) {
         return Optional.ofNullable(users.get(id));
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         users.remove(id);
     }
 
-    @Override
-    public boolean checkUniqueOfEmail(Integer id, String email) {
-        for (User user : users.values()) {
-            if (user.getEmail().equals(email) && (int) user.getId() != id) {
-                return false;
-            }
-        }
-        return true;
-    }
 
-    @Override
-    public boolean checkUniqueOfEmailOfNewUser(String email) {
-        for (User user : users.values()) {
-            if (user.getEmail().equals(email)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

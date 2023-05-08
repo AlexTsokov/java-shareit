@@ -1,68 +1,97 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
+    // private final UserStorage userStorage;
+    private final UserRepository userRepository;
+   // private final UserValidator userValidator;
 
-    @Autowired
-    public UserServiceImpl(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
 
     @Override
     public User createUser(User user) {
-        if (!userStorage.checkUniqueOfEmailOfNewUser(user.getEmail())) {
-            throw new EmailException("Почта уже существует");
-        }
+//        if (!checkUniqueOfEmailOfNewUser(user.getEmail())) {
+//            throw new EmailException("Почта уже существует");
+//        }
         log.info("Пользователь добавлен");
-        return userStorage.createUser(user);
+        return userRepository.save(user);
     }
 
+
     @Override
-    public User changeUser(Integer id, User user) {
+    public User changeUser(Long id, User user) {
+        User userForUpdate = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         if (user.getEmail() != null) {
-            if (!userStorage.checkUniqueOfEmail(id, user.getEmail())) {
+            if (!checkUniqueOfEmail(id, user.getEmail())) {
                 throw new EmailException("Почта " + user.getEmail() + " уже существует");
             }
         }
+        if (user.getName() != null && !user.getName().isBlank()) {
+            userForUpdate.setName(user.getName());
+        }
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            userForUpdate.setEmail(user.getEmail());
+        }
         log.info("Пользователь обновлен");
-        return userStorage.changeUser(id, user);
+        return userRepository.save(userForUpdate);
+
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userRepository.findAll();
     }
 
     @Override
-    public User findUserById(Integer id) {
-        if (userStorage.findUserById(id).isEmpty()) {
-            throw new EntityNotFoundException("Пользователь не найден");
-        }
-        return userStorage.findUserById(id).get();
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         log.info("Пользователь удален");
-        userStorage.deleteUser(id);
+        userRepository.deleteById(id);
     }
 
     @Override
-    public boolean checkUserExist(Integer userId) {
-        return (userId != null && userStorage.findUserById(userId).isPresent());
+    public boolean checkUserExist(Long userId) {
+        return (userId != null && userRepository.findById(userId).isPresent());
+    }
+
+    @Override
+    public boolean checkUniqueOfEmail(Long id, String email) {
+        for (User user : userRepository.findAll()) {
+            if (user.getEmail().equals(email) && (long)user.getId() != id) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkUniqueOfEmailOfNewUser(String email) {
+        for (User user : userRepository.findAll()) {
+            if (user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

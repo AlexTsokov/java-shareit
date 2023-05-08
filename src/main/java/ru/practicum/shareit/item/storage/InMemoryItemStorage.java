@@ -9,11 +9,11 @@ import java.util.*;
 @Component
 public class InMemoryItemStorage implements ItemStorage {
 
-    private final Map<Integer, Item> items = new HashMap<>();
-    private Integer itemId = 0;
+    private final Map<Long, Item> items = new HashMap<>();
+    private long itemId = 0;
 
     @Override
-    public Integer setItemId() {
+    public long setItemId() {
         itemId++;
         return itemId;
     }
@@ -26,7 +26,7 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public Item changeItem(Item item, Integer id) {
+    public Item changeItem(Item item, Long id) {
         item.setId(id);
         Item itemForUpdate = items.get(item.getId());
         if (itemForUpdate == null) {
@@ -45,12 +45,12 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public Optional<Item> findItemById(Integer id) {
+    public Optional<Item> findItemById(Long id) {
         return Optional.ofNullable(items.get(id));
     }
 
     @Override
-    public List<Item> findItemsByUser(Integer userId) {
+    public List<Item> findItemsByUser(Long userId) {
         List<Item> userItemsList = new ArrayList<>();
         for (Item item : items.values()) {
             if (item.getOwnerId().equals(userId)) {

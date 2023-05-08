@@ -23,7 +23,19 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Объект не найден " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error("Объект не найден: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        return message;
+    }
+
+    @ExceptionHandler(BookingNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage resourceNotFoundException(BookingNotFoundException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -35,7 +47,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Адрес почты не уникален " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error("Адрес почты не уникален: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -47,7 +59,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Введены некорректные данные " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error("Введены некорректные данные: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 
@@ -59,7 +71,15 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Не указан пользователь вещи " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error("Не указан пользователь вещи: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        return message;
+    }
+
+    @ExceptionHandler(StateException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage stateException(Exception ex) {
+        ErrorMessage message = new ErrorMessage(ex.getMessage());
+        log.error("Не указан пользователь вещи: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
         return message;
     }
 }

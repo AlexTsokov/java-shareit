@@ -9,12 +9,15 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    User changeUser(Integer id, User user);
+    User changeUser(Long id, User user);
 
-    User findUserById(Integer id);
+    User findUserById(Long id);
 
-    void deleteUser(Integer id);
+    void deleteUser(Long id);
 
-    boolean checkUserExist(Integer userId);
+    boolean checkUserExist(Long userId);
 
+    boolean checkUniqueOfEmail(Long id, String email);
+
+    boolean checkUniqueOfEmailOfNewUser(String email);
 }
