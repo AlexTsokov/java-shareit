@@ -13,8 +13,7 @@ public class ErrorMessage {
     private String error;
     private String description;
 
-    public ErrorMessage(String error){
+    public ErrorMessage(String error) {
         this.error = error;
     }
-
 }
