@@ -8,9 +8,10 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+
 import java.util.List;
 
 @RestController
