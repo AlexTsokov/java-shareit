@@ -17,11 +17,10 @@ import java.time.LocalDateTime;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
 
     @Override
-    public CommentDto addComment(Long userId, Long itemId, Comment comment) {
+    public Comment addComment(Long userId, Long itemId, Comment comment) {
         if (comment.getText().isBlank())
             throw new BookingNotFoundException("Комментарий не найден");
         comment.setItem(itemId);
@@ -30,9 +29,7 @@ public class CommentServiceImpl implements CommentService {
         if (bookingRepository.findLastBookingByBookerId(comment.getItem(), comment.getAuthor()) == null) {
             throw new BookingNotFoundException("Бронирование не найдено");
         }
-        Comment savedComment = commentRepository.save(comment);
-        CommentDto commentDto = CommentMapper.toCommentDto(savedComment);
-        commentDto.setAuthorName(userRepository.findById(userId).get().getName());
-        return commentDto;
+        commentRepository.save(comment);
+        return comment;
     }
 }
