@@ -15,9 +15,9 @@ public class Comment {
     @Column(name = "text", nullable = false)
     private String text;
     @Column(name = "item_id")
-    private long item;
+    private Long item;
     @Column(name = "author_id", nullable = false)
-    private long author;
+    private Long author;
     @Column(name = "created", nullable = false)
     LocalDateTime created;
 }
