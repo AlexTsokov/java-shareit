@@ -32,7 +32,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByItem_IdInAndStatusEquals(List<Long> itemId, Status status, Sort sort);
 
-    @Query(value = "select * from BOOKING b " +
+    @Query(value = "select * from bookings b " +
             "where item_id = ?1 " +
             "and start_date < current_timestamp " +
             "order by start_date desc " +
@@ -41,7 +41,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Booking findLastBookingByItemId(Long itemId);
 
-    @Query(value = "select * from BOOKING b " +
+    @Query(value = "select * from bookings b " +
             "where item_id = ?1 " +
             "and status in ('WAITING', 'APPROVED') " +
             "and start_date > current_timestamp " +
@@ -51,7 +51,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Booking findNextBookingByItemId(Long itemId);
 
-    @Query(value = "select * from BOOKING b " +
+    @Query(value = "select * from bookings b " +
             "where item_id = ?1 " +
             "and booker_id = ?2 " +
             "and end_date <= current_timestamp " +
