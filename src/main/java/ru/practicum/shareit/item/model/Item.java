@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import ru.practicum.shareit.booking.model.Booking;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity
