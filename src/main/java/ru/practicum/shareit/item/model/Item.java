@@ -21,6 +21,4 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
-    @OneToMany
-    private List<Booking> bookingList;
 }
