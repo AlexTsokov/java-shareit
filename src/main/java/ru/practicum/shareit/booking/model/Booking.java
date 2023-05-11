@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "ITEMS_BOOKING_LIST", schema = "public")
+@Table(name = "ITEMS_BOOKING_LIST")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
