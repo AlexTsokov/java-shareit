@@ -21,6 +21,6 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     private List<Booking> bookingList;
 }
