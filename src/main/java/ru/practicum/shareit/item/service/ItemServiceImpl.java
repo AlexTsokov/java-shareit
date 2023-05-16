@@ -16,11 +16,10 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,14 +31,12 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
 
     @Override
     public Item createItem(Long userId, Item item) {
-        if (!userService.checkUserExist(userId))
-            throw new EntityNotFoundException("Не найден");
-        item.setOwnerId(userId);
-        log.info("Вещь добавлена");
+        User user = userService.findUserById(userId);
+        item.setOwner(user);
+        log.info("Вещь {} добавлена пользователю {} c id {}", item.getName(), user.getName(), userId);
         return itemRepository.save(item);
     }
 
@@ -47,9 +44,10 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(Long userId, Long itemId, Item item) {
         Item itemForUpdate = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
         if (userService.checkUserExist(userId) && checkIfItemOwner(userId, itemId)) {
-            item.setOwnerId(userId);
+            item.setOwner(userService.findUserById(userId));
             if (item.getName() != null && !item.getName().isBlank()) {
                 itemForUpdate.setName(item.getName());
+                log.info("Вещь {} обновлена", item.getName());
             }
             if (item.getDescription() != null && !item.getDescription().isBlank()) {
                 itemForUpdate.setDescription(item.getDescription());
@@ -57,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
             if (item.getAvailable() != null) {
                 itemForUpdate.setAvailable(item.getAvailable());
             }
-            log.info("Вещь обновлена");
             return itemRepository.save(itemForUpdate);
         } else throw new EntityNotFoundException("Пользователь данной вещи не найден");
     }
@@ -71,21 +68,21 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findItemDtoById(Long userId, Long id) {
         Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         ItemDto itemDto = ItemMapper.toItemDto(item);
-        if ((long) item.getOwnerId() == userId) {
+        if ((long) item.getOwner().getId() == userId) {
             Booking lastBooking = bookingRepository.findLastBookingByItemId(itemDto.getId());
             if (lastBooking != null) {
-                itemDto.setLastBooking(BookingMapper.mapToBookingDto(lastBooking));
+                itemDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
             }
             Booking nextBooking = bookingRepository.findNextBookingByItemId(itemDto.getId());
             if (nextBooking != null) {
-                itemDto.setNextBooking(BookingMapper.mapToBookingDto(nextBooking));
+                itemDto.setNextBooking(BookingMapper.toBookingDto(nextBooking));
             }
         }
         List<Comment> commentList = commentRepository.findByItemId(id);
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (Comment comment : commentList) {
             CommentDto commentDto = CommentMapper.toCommentDto(comment);
-            commentDto.setAuthorName(userRepository.findById(comment.getAuthor()).get().getName());
+            commentDto.setAuthorName(comment.getAuthor().getName());
             commentDtoList.add(commentDto);
         }
         itemDto.setComments(commentDtoList);
@@ -100,11 +97,11 @@ public class ItemServiceImpl implements ItemService {
             ItemDto itemDto = ItemMapper.toItemDto(item);
             Booking lastBooking = bookingRepository.findLastBookingByItemId(itemDto.getId());
             if (lastBooking != null) {
-                itemDto.setLastBooking(BookingMapper.mapToBookingDto(lastBooking));
+                itemDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
             }
             Booking nextBooking = bookingRepository.findNextBookingByItemId(itemDto.getId());
             if (nextBooking != null) {
-                itemDto.setNextBooking(BookingMapper.mapToBookingDto(nextBooking));
+                itemDto.setNextBooking(BookingMapper.toBookingDto(nextBooking));
             }
             List<Comment> commentList = commentRepository.findByItemId(item.getId());
             List<CommentDto> commentDtoList = CommentMapper.toCommentDtoList(commentList);
@@ -116,14 +113,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> searchItems(String text) {
-        if (!text.isBlank())
-            return itemRepository.search(text);
-        else return Collections.emptyList();
+        return itemRepository.search(text.toUpperCase());
     }
 
     public boolean checkIfItemOwner(Long userId, Long itemId) {
         Item item = findItemById(itemId);
-        return (long) item.getOwnerId() == userId;
+        return (long) item.getOwner().getId() == userId;
     }
 
     @Override

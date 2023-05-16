@@ -53,7 +53,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> findItemsByUser(Long userId) {
         List<Item> userItemsList = new ArrayList<>();
         for (Item item : items.values()) {
-            if (item.getOwnerId().equals(userId)) {
+            if (item.getOwner().getId().equals(userId)) {
                 userItemsList.add(item);
             }
         }

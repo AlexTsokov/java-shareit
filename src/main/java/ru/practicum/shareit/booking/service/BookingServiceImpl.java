@@ -3,6 +3,8 @@ package ru.practicum.shareit.booking.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
@@ -31,18 +33,21 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
 
     @Override
-    public Booking createBooking(Long bookerId, Booking booking) {
-        if (!validate(booking)) {
+    public Booking createBooking(Long bookerId, BookingDto bookingDto) {
+        if (!validate(bookingDto)) {
             throw new BookingNotFoundException("Бронирование невозможно");
         }
-        if (bookerId == (long) booking.getItem().getOwnerId()) {
+        Booking booking = BookingMapper.mapToBooking(bookingDto,
+                itemService.findItemById(bookingDto.getItemId()),
+                userService.findUserById(bookerId));
+        if (bookerId == (long) booking.getItem().getOwner().getId()) {
             throw new EntityNotFoundException("Вы не можете арендовать свою вещь");
         }
         itemService.checkItem(booking.getItem().getId());
         if (!userService.checkUserExist(bookerId))
             throw new EntityNotFoundException("Пользователь не найден");
         booking.setBooker(userService.findUserById(bookerId));
-        log.info("Бронирование создано");
+        log.info("Бронирование для {} создано", booking.getItem().getName());
         return bookingRepository.save(booking);
     }
 
@@ -50,8 +55,9 @@ public class BookingServiceImpl implements BookingService {
     public Booking updateBooking(Long ownerId, Long bookingId, Boolean approved) {
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(EntityNotFoundException::new);
-        if ((long) booking.getItem().getOwnerId() != ownerId) {
-            throw new EntityNotFoundException("У пользовтеля нет этого предмета");
+        if ((long) booking.getItem().getOwner().getId() != ownerId) {
+            throw new EntityNotFoundException("У пользователя " + userService.findUserById(ownerId).getName() +
+                    "нет предмета " + booking.getItem().getName());
         }
         if (booking.getStatus() != Status.WAITING) {
             throw new BookingNotFoundException("Бронирование невозможно");
@@ -61,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        log.info("Бронирование обновлено");
+        log.info("Бронирование для {} обновлено", booking.getItem().getName());
         return bookingRepository.save(booking);
     }
 
@@ -70,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         if (!userService.checkUserExist(userId))
             throw new EntityNotFoundException("Пользователь не найден");
-        if (userId != (long) booking.getBooker().getId() && userId != (long) booking.getItem().getOwnerId()) {
+        if (userId != (long) booking.getBooker().getId() && userId != (long) booking.getItem().getOwner().getId()) {
             throw new EntityNotFoundException("У пользователя нет этого бронирования");
         }
         return booking;
@@ -80,8 +86,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getBookingList(Long bookerId, String state) {
         if (!userService.checkUserExist(bookerId))
             throw new EntityNotFoundException("Пользователь не найден");
-        checkState(state);
-        switch (State.valueOf(state)) {
+        switch (checkState(state)) {
             case ALL:
                 return bookingRepository.findByBooker_Id(bookerId, Sort.by("start").descending());
             case CURRENT:
@@ -108,13 +113,12 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getBookingByOwner(Long ownerId, String state) {
         if (!userService.checkUserExist(ownerId))
             throw new EntityNotFoundException("Пользователь не найден");
-        checkState(state);
         List<Item> itemList = itemRepository.findItemsByUser(ownerId);
         List<Long> itemIdList = new ArrayList<>();
         for (Item item : itemList) {
             itemIdList.add(item.getId());
         }
-        switch (State.valueOf(state)) {
+        switch (checkState(state)) {
             case ALL:
                 return bookingRepository.findByItem_IdIn(itemIdList, Sort.by("start").descending());
             case CURRENT:
@@ -137,15 +141,15 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void checkState(String state) {
+    private State checkState(String state) {
         try {
-            State.valueOf(state);
+            return State.valueOf(state);
         } catch (Exception e) {
             throw new StateException("Unknown state: " + state);
         }
     }
 
-    public boolean validate(Booking booking) {
+    public boolean validate(BookingDto booking) {
         LocalDateTime dateNow = LocalDateTime.now();
         return booking.getEnd() != null && booking.getStart() != null && !booking.getEnd().isBefore(dateNow) &&
                 !booking.getStart().isBefore(LocalDateTime.now()) && booking.getStart().isBefore(booking.getEnd()) &&

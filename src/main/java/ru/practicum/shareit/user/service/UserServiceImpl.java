@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        log.info("Пользователь добавлен");
+        log.info("Пользователь {} добавлен", user.getName());
         return userRepository.save(user);
     }
 
@@ -32,11 +32,11 @@ public class UserServiceImpl implements UserService {
         }
         if (user.getName() != null && !user.getName().isBlank()) {
             userForUpdate.setName(user.getName());
+            log.info("Пользователь {} обновлен", user.getName());
         }
         if (user.getEmail() != null && !user.getEmail().isBlank()) {
             userForUpdate.setEmail(user.getEmail());
         }
-        log.info("Пользователь обновлен");
         return userRepository.save(userForUpdate);
     }
 
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-        log.info("Пользователь удален");
+        log.info("Пользователь с id {} удален", id);
         userRepository.deleteById(id);
     }
 

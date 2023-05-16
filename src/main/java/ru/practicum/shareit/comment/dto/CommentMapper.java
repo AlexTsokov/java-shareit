@@ -12,7 +12,15 @@ public class CommentMapper {
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setCreated(comment.getCreated());
+        dto.setAuthorName(comment.getAuthor().getName());
         return dto;
+    }
+
+    public static Comment toComment (CommentDto commentDto) {
+        Comment comment = new Comment();
+        comment.setId(commentDto.getId());
+        comment.setText(commentDto.getText());
+        return comment;
     }
 
     public static List<CommentDto> toCommentDtoList(List<Comment> commentList) {

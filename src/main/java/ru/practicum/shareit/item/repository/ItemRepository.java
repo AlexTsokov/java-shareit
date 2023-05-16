@@ -11,11 +11,11 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(" select i from Item i " +
-            "where (upper(i.name) like upper(concat('%', ?1, '%')) " +
-            " or upper(i.description) like upper(concat('%', ?1, '%'))) and i.available = true")
+            "where (upper(i.name) like concat('%', ?1, '%') " +
+            " or upper(i.description) like concat('%', ?1, '%')) and i.available = true")
     List<Item> search(String text);
 
-    @Query(" select i from Item i where i.ownerId = ?1")
+    @Query(" select i from Item i where i.owner.id = ?1")
     List<Item> findItemsByUser(Long userId);
 
 }
