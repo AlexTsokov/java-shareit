@@ -11,6 +11,7 @@ import ru.practicum.shareit.exception.BookingNotFoundException;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Service
@@ -23,6 +24,7 @@ public class CommentServiceImpl implements CommentService {
     private final ItemService itemService;
 
     @Override
+    @Transactional
     public Comment addComment(Long userId, Long itemId, CommentDto commentDto) {
         if (commentDto.getText().isBlank())
             throw new BookingNotFoundException("Комментарий не найден");

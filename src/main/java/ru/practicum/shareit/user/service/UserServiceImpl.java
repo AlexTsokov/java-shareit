@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
-import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -25,11 +24,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User changeUser(Long id, User user) {
         User userForUpdate = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if (user.getEmail() != null) {
-            if (!checkUniqueOfEmail(id, user.getEmail())) {
-                throw new EmailException("Почта " + user.getEmail() + " уже существует");
-            }
-        }
         if (user.getName() != null && !user.getName().isBlank()) {
             userForUpdate.setName(user.getName());
             log.info("Пользователь {} обновлен", user.getName());
@@ -59,26 +53,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkUserExist(Long userId) {
         return (userId != null && userRepository.findById(userId).isPresent());
-    }
-
-    @Override
-    public boolean checkUniqueOfEmail(Long id, String email) {
-        for (User user : userRepository.findAll()) {
-            if (user.getEmail().equals(email) && (long) user.getId() != id) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean checkUniqueOfEmailOfNewUser(String email) {
-        for (User user : userRepository.findAll()) {
-            if (user.getEmail().equals(email)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

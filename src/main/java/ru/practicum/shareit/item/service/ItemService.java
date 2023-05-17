@@ -20,6 +20,4 @@ public interface ItemService {
 
     boolean checkIfItemOwner(Long userId, Long itemId);
 
-    void checkItem(Long itemId);
-
 }

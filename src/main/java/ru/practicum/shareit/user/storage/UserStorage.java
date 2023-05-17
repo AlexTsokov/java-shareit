@@ -17,9 +17,5 @@ public interface UserStorage {
 
     void deleteUser(Long id);
 
-//    boolean checkUniqueOfEmail(Integer id, String email);
-//
-//    boolean checkUniqueOfEmailOfNewUser(String email);
-
     Long setUserId();
 }

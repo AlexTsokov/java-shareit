@@ -1,19 +1,16 @@
 package ru.practicum.shareit.comment.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.comment.model.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
-        CommentDto dto = new CommentDto();
-        dto.setId(comment.getId());
-        dto.setText(comment.getText());
-        dto.setCreated(comment.getCreated());
-        dto.setAuthorName(comment.getAuthor().getName());
-        return dto;
+        return new CommentDto(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
     }
 
     public static Comment toComment(CommentDto commentDto) {

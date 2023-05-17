@@ -10,7 +10,6 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exception.BookingNotFoundException;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -121,11 +120,4 @@ public class ItemServiceImpl implements ItemService {
         return (long) item.getOwner().getId() == userId;
     }
 
-    @Override
-    public void checkItem(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
-        if (!item.getAvailable()) {
-            throw new BookingNotFoundException("Предмет не доступен для бронирования");
-        }
-    }
 }

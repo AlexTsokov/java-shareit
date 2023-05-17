@@ -17,7 +17,4 @@ public interface UserService {
 
     boolean checkUserExist(Long userId);
 
-    boolean checkUniqueOfEmail(Long id, String email);
-
-    boolean checkUniqueOfEmailOfNewUser(String email);
 }

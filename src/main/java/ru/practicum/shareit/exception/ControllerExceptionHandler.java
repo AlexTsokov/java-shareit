@@ -39,18 +39,6 @@ public class ControllerExceptionHandler {
         return message;
     }
 
-    @ExceptionHandler(EmailException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage emailException(Exception ex, WebRequest request) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                ex.getMessage(),
-                request.getDescription(false));
-        log.error("Адрес почты не уникален: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
-        return message;
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage methodArgumentNotValidException(Exception ex, WebRequest request) {
