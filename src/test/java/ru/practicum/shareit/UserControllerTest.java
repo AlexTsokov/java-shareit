@@ -32,7 +32,7 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void CreateUserTest() throws Exception {
+    void createUserTest() throws Exception {
         User user = User
                 .builder()
                 .id(1L)
