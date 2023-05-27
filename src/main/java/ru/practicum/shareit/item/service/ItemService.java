@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.InfoFromRequest;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface ItemService {
 
     Item findItemById(Long id);
 
-    List<ItemDto> findItemsByUser(Long userId);
+    List<ItemDto> getAllUserItems(InfoFromRequest infoFromRequest);
 
     List<Item> searchItems(String text);
 

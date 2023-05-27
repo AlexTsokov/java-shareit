@@ -27,6 +27,18 @@ public class ControllerExceptionHandler {
         return message;
     }
 
+    @ExceptionHandler(RequestNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage requestNotFoundException(RequestNotFoundException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        return message;
+    }
+
     @ExceptionHandler(BookingNotFoundException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage resourceNotFoundException(BookingNotFoundException ex, WebRequest request) {

@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.model.InfoFromRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,14 +20,14 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated ItemDto itemDto) {
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated ItemDto itemDto) {
         return ItemMapper.toItemDto(itemService.createItem(userId, ItemMapper.toItem(itemDto)));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @PathVariable Long itemId,
-                          @RequestBody ItemDto itemDto) {
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                              @PathVariable Long itemId,
+                              @RequestBody ItemDto itemDto) {
         return ItemMapper.toItemDto(itemService.updateItem(userId, itemId, ItemMapper.toItem(itemDto)));
     }
 
@@ -36,8 +37,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getUserItemsList(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.findItemsByUser(userId);
+    public List<ItemDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @RequestParam(required = false) Integer from,
+                                         @RequestParam(required = false) Integer size) {
+        return itemService.getAllUserItems(InfoFromRequest.getInfoFromRequest(userId, from, size));
     }
 
     @GetMapping("/search")

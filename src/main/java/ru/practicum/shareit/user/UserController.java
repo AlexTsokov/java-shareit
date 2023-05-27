@@ -18,13 +18,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto create(@RequestBody @Validated(Create.class) UserDto user) {
+    public UserDto createUser(@RequestBody @Validated(Create.class) UserDto user) {
         return UserMapper.toUserDto(userService.createUser(UserMapper.toUser(user)));
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @RequestBody @Validated(Update.class) UserDto user) {
-        return UserMapper.toUserDto(userService.changeUser(id, UserMapper.toUser(user)));
+    public UserDto updateUser(@PathVariable Long id, @RequestBody @Validated(Update.class) UserDto user) {
+        return UserMapper.toUserDto(userService.updateUser(id, UserMapper.toUser(user)));
     }
 
     @GetMapping

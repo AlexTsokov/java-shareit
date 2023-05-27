@@ -17,15 +17,15 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDtoWithItemName create(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                          @Valid @RequestBody BookingDto bookingDto) {
+    public BookingDtoWithItemName createBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                                @Valid @RequestBody BookingDto bookingDto) {
         return bookingService.createBooking(bookerId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDtoWithItemName change(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                          @PathVariable Long bookingId,
-                          @NotBlank @RequestParam Boolean approved) {
+    public BookingDtoWithItemName updateBooking(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                                @PathVariable Long bookingId,
+                                                @NotBlank @RequestParam Boolean approved) {
         return bookingService.updateBooking(ownerId, bookingId, approved);
     }
 
@@ -35,14 +35,18 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDtoWithItemName> getBookingList(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                        @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getBookingList(bookerId, state);
+    public List<BookingDtoWithItemName> findAllByUser(@RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                                      @RequestParam(defaultValue = "ALL") String state,
+                                                      @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return bookingService.findAllByUser(bookerId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoWithItemName> getBookingByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                                           @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getBookingByOwner(ownerId, state);
+    public List<BookingDtoWithItemName> findAllByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                                       @RequestParam(defaultValue = "ALL") String state,
+                                                       @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                       @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return bookingService.findAllByOwner(ownerId, state, from, size);
     }
 }

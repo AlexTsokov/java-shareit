@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -15,6 +17,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.model.InfoFromRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -89,8 +92,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findItemsByUser(Long userId) {
-        List<Item> itemList = itemRepository.findItemsByUser(userId);
+    public List<ItemDto> getAllUserItems(InfoFromRequest infoFromRequest) {
+        Long userId = infoFromRequest.getUserId();
+        Integer from = infoFromRequest.getFromPage();
+        Integer size = infoFromRequest.getSizePages();
+        List<Item> itemList;
+        if (from == null || size == null) {
+            itemList = itemRepository.findItemsByOwner(userId);
+        } else {
+            int fromPage = from / size;
+            Pageable pageable = PageRequest.of(fromPage, size);
+            itemList = itemRepository.findItemsByOwner(userId, pageable);
+        }
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : itemList) {
             ItemDto itemDto = ItemMapper.toItemDto(item);
