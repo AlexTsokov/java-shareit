@@ -20,7 +20,9 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -85,10 +87,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private List<RequestDto> settingRequestDtoList(List<Request> requests) {
+        Map<Long, List<ItemDto>> items = itemRepository.getItemsByRequestIdIn(
+                        requests.stream().map(Request::getId).collect(Collectors.toList())).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.groupingBy(ItemDto::getRequestId, Collectors.toList()));
         List<RequestDto> requestsDto = requests.stream()
                 .map(RequestMapper::mapFromRequest)
                 .collect(Collectors.toList());
-        requestsDto.forEach(this::addItems);
+        requestsDto.forEach(r -> r.setItems(items.getOrDefault(r.getId(), Collections.emptyList())));
         return requestsDto;
     }
 }

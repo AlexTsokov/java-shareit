@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Arrays;
 import java.util.Date;
 
 @RestControllerAdvice
@@ -23,7 +22,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Объект не найден: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 
@@ -47,7 +46,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error(ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 
@@ -59,7 +58,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Введены некорректные данные: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 
@@ -71,7 +70,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("Не указан пользователь вещи: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 
@@ -79,7 +78,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage stateException(Exception ex) {
         ErrorMessage message = new ErrorMessage(ex.getMessage());
-        log.error("Не указан пользователь вещи: " + ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 }

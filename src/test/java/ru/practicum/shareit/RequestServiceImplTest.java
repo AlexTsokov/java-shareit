@@ -120,7 +120,6 @@ class RequestServiceImplTest {
         TypedQuery<Request> query = entityManager.createQuery("SELECT rt from Request rt", Request.class);
 
         List<Request> requestsFromDb = query.getResultList();
-        ;
 
         assertEquals(requests.size(), 2);
         assertEquals(requests.get(0).getDescription(), requestsFromDb.get(0).getDescription());
