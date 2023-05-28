@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.RequestNotFoundException;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.request.dto.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.item.model.InfoFromRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.user.dto.PageableRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -56,15 +58,11 @@ public class RequestServiceImpl implements RequestService {
         Integer size = requestInfo.getSizePages();
         Integer from = requestInfo.getFromPage();
         List<RequestDto> requestsDto;
-        if (from == null || size == null) {
-            List<Request> requests = requestRepository.findByRequester_IdNot(userId);
-            requestsDto = settingRequestDtoList(requests);
-            return requestsDto;
-        }
-        if ((size == 0 && from == 0) || (size < 0 || from < 0)) {
+        Pageable pageable = PageableRequest.getPageableRequest(from, size);
+        if ((size < 0 || from < 0)) {
             throw new RequestNotFoundException("Неверный формат запросов");
         }
-        List<Request> requests = requestRepository.findByRequester_IdNot(requestInfo.getUserId());
+        List<Request> requests = requestRepository.findByRequester_IdNot(userId, pageable);
         requestsDto = settingRequestDtoList(requests);
         return requestsDto;
     }

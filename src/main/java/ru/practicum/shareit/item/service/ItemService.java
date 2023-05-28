@@ -17,7 +17,7 @@ public interface ItemService {
 
     List<ItemDto> getAllUserItems(InfoFromRequest infoFromRequest);
 
-    List<Item> searchItems(String text);
+    List<Item> searchItems(InfoFromRequest infoFromRequest);
 
     boolean checkIfItemOwner(Long userId, Long itemId);
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.item.model.InfoFromRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.dto.PageableRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
@@ -103,9 +105,9 @@ class ItemServiceImplTest {
 
         item = service.createItem(user.getId(), item);
 
-        Item result = service.findItemById(user.getId());
+        Item result = service.findItemById(item.getId());
 
-        Item itemFromDB = itemRepository.findById(user.getId()).orElseThrow(EntityNotFoundException::new);
+        Item itemFromDB = itemRepository.findById(item.getId()).orElseThrow(EntityNotFoundException::new);
 
         assertEquals(itemFromDB.getId(), result.getId());
         assertEquals(itemFromDB.getName(), result.getName());
@@ -132,7 +134,7 @@ class ItemServiceImplTest {
 
         item2 = service.createItem(user.getId(), item2);
 
-        InfoFromRequest info = InfoFromRequest.getInfoFromRequest(user.getId(), null, null);
+        InfoFromRequest info = InfoFromRequest.getInfoFromRequest(user.getId(), 0, 10);
 
         List<ItemDto> items = service.getAllUserItems(info);
 
@@ -167,11 +169,22 @@ class ItemServiceImplTest {
 
         item2 = service.createItem(user.getId(), item2);
 
-        List<Item> items = service.searchItems("drill".toUpperCase());
-        List<Item> items2 = service.searchItems("play".toUpperCase());
+        InfoFromRequest infoFromRequest1 = InfoFromRequest.getInfoFromRequestWithText(
+                "drill".toUpperCase(), 0, 10);
+        InfoFromRequest infoFromRequest2 = InfoFromRequest.getInfoFromRequestWithText(
+                "play".toUpperCase(), 0, 10);
 
-        List<ItemDto> itemsFromDBDrill = ItemMapper.toDtoList(itemRepository.search("drill".toUpperCase()));
-        List<ItemDto> itemsFromDBPlayStation = ItemMapper.toDtoList(itemRepository.search("play".toUpperCase()));
+        List<Item> items = service.searchItems(infoFromRequest1);
+        List<Item> items2 = service.searchItems(infoFromRequest2);
+        Pageable pageable1 = PageableRequest.getPageableRequest(
+                infoFromRequest1.getFromPage(), infoFromRequest1.getSizePages());
+        Pageable pageable2 = PageableRequest.getPageableRequest(
+                infoFromRequest2.getFromPage(), infoFromRequest2.getSizePages());
+
+        List<ItemDto> itemsFromDBDrill = ItemMapper.toDtoList(itemRepository.search(
+                "drill".toUpperCase(), pageable1));
+        List<ItemDto> itemsFromDBPlayStation = ItemMapper.toDtoList(itemRepository.search(
+                "play".toUpperCase(), pageable2));
 
         assertEquals(items.size(), itemsFromDBDrill.size());
         assertEquals(items.get(0).getId(), itemsFromDBDrill.get(0).getId());

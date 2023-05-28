@@ -114,7 +114,7 @@ class RequestServiceImplTest {
                 .build();
         entityManager.persist(request1);
 
-        InfoFromRequest requestInfo = InfoFromRequest.getInfoFromRequest(user2.getId(), null, null);
+        InfoFromRequest requestInfo = InfoFromRequest.getInfoFromRequest(user2.getId(), 0, 10);
 
         List<RequestDto> requests = requestService.getRequests(requestInfo);
         TypedQuery<Request> query = entityManager.createQuery("SELECT rt from Request rt", Request.class);

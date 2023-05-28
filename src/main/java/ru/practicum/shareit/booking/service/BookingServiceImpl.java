@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import ru.practicum.shareit.exception.StateException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.shareit.user.dto.PageableRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -94,62 +94,33 @@ public class BookingServiceImpl implements BookingService {
         validateParams(bookerId, page, size);
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
-        if (page == null || size == null) {
-            switch (checkState(state)) {
-                case ALL:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdOrderByStartDesc(bookerId));
-                case REJECTED:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(bookerId, Status.REJECTED));
-                case WAITING:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(bookerId, Status.WAITING));
-                case CURRENT:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                    bookerId, end, start));
-                case PAST:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndBeforeOrderByStartDesc(bookerId,
-                                    end, start));
-                case FUTURE:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartAfterAndEndAfterOrderByStartDesc(bookerId,
-                                    end, start));
-                default:
-                    throw new StateException("Unknown state: " + state);
-            }
-        } else {
-            int fromPage = page / size;
-            Pageable pageable = PageRequest.of(fromPage, size);
-            switch (checkState(state)) {
-                case ALL:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdOrderByStartDesc(bookerId, pageable));
-                case REJECTED:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(
-                                    bookerId, Status.REJECTED, pageable));
-                case WAITING:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(
-                                    bookerId, Status.WAITING, pageable));
-                case CURRENT:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                    bookerId, end, start, pageable));
-                case PAST:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndBeforeOrderByStartDesc(
-                                    bookerId, end, start, pageable));
-                case FUTURE:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByBooker_IdAndStartAfterAndEndAfterOrderByStartDesc(
-                                    bookerId, end, start, pageable));
-                default:
-                    throw new StateException("Unknown state: " + state);
-            }
+        Pageable pageable = PageableRequest.getPageableRequest(page, size);
+        switch (checkState(state)) {
+            case ALL:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdOrderByStartDesc(bookerId, pageable));
+            case REJECTED:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(
+                                bookerId, Status.REJECTED, pageable));
+            case WAITING:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdAndStatusEqualsOrderByStartDesc(
+                                bookerId, Status.WAITING, pageable));
+            case CURRENT:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(
+                                bookerId, end, start, pageable));
+            case PAST:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdAndStartBeforeAndEndBeforeOrderByStartDesc(
+                                bookerId, end, start, pageable));
+            case FUTURE:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByBooker_IdAndStartAfterAndEndAfterOrderByStartDesc(
+                                bookerId, end, start, pageable));
+            default:
+                throw new StateException("Unknown state: " + state);
         }
     }
 
@@ -159,64 +130,33 @@ public class BookingServiceImpl implements BookingService {
         validateParams(ownerId, page, size);
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
-        if (page == null || size == null) {
-            switch (checkState(state)) {
-                case ALL:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdOrderByStartDesc(ownerId));
-                case REJECTED:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
-                                    ownerId, Status.REJECTED));
-                case WAITING:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
-                                    ownerId, Status.WAITING));
-                case CURRENT:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                    ownerId, end, start));
-                case PAST:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndBeforeOrderByStartDesc(
-                                    ownerId, end, start));
-                case FUTURE:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartAfterAndEndAfterOrderByStartDesc(
-                                    ownerId, end, start));
-                default:
-                    throw new StateException("Unknown state: " + state);
-            }
-        } else {
-            int fromPage = page / size;
-            Pageable pageable = PageRequest.of(fromPage, size);
-            switch (checkState(state)) {
-                case ALL:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdOrderByStartDesc(ownerId, pageable));
-                case REJECTED:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
-                                    ownerId, Status.REJECTED, pageable));
-                case WAITING:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
-                                    ownerId, Status.WAITING, pageable));
-                case CURRENT:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                                    ownerId, end, start, pageable));
-                case PAST:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndBeforeOrderByStartDesc(
-                                    ownerId, end, start, pageable));
-                case FUTURE:
-                    return BookingMapper.toBookingWithItemNameDtoList(
-                            bookingRepository.getBookingsByItemOwnerIdAndStartAfterAndEndAfterOrderByStartDesc(
-                                    ownerId, end, start, pageable));
-                default:
-                    throw new StateException("Unknown state: " + state);
-            }
+        Pageable pageable = PageableRequest.getPageableRequest(page, size);
+        switch (checkState(state)) {
+            case ALL:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdOrderByStartDesc(ownerId, pageable));
+            case REJECTED:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
+                                ownerId, Status.REJECTED, pageable));
+            case WAITING:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdAndStatusEqualsOrderByStartDesc(
+                                ownerId, Status.WAITING, pageable));
+            case CURRENT:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                                ownerId, end, start, pageable));
+            case PAST:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdAndStartBeforeAndEndBeforeOrderByStartDesc(
+                                ownerId, end, start, pageable));
+            case FUTURE:
+                return BookingMapper.toBookingWithItemNameDtoList(
+                        bookingRepository.getBookingsByItemOwnerIdAndStartAfterAndEndAfterOrderByStartDesc(
+                                ownerId, end, start, pageable));
+            default:
+                throw new StateException("Unknown state: " + state);
         }
     }
 

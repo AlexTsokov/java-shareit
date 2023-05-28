@@ -35,7 +35,7 @@ public class ControllerExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error(ex.getMessage() + Arrays.toString(ex.getStackTrace()));
+        log.error(ex.getMessage(), ex);
         return message;
     }
 

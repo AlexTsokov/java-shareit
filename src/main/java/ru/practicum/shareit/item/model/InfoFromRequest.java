@@ -12,12 +12,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InfoFromRequest {
     private Long userId;
+    private String text;
     private Integer fromPage;
     private Integer sizePages;
 
     public static InfoFromRequest getInfoFromRequest(Long ownerId, Integer from, Integer size) {
         return InfoFromRequest.builder()
                 .userId(ownerId)
+                .fromPage(from)
+                .sizePages(size)
+                .build();
+    }
+
+    public static InfoFromRequest getInfoFromRequestWithText(String text, Integer from, Integer size) {
+        return InfoFromRequest.builder()
+                .text(text)
                 .fromPage(from)
                 .sizePages(size)
                 .build();

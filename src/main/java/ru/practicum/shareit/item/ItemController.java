@@ -38,14 +38,17 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @RequestParam(required = false) Integer from,
-                                         @RequestParam(required = false) Integer size) {
+                                         @RequestParam(required = false, defaultValue = "0") Integer from,
+                                         @RequestParam(required = false, defaultValue = "10") Integer size) {
         return itemService.getAllUserItems(InfoFromRequest.getInfoFromRequest(userId, from, size));
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam(name = "text") String text) {
+    public List<ItemDto> searchItems(@RequestParam(name = "text") String text,
+                                     @RequestParam(required = false, defaultValue = "0") Integer from,
+                                     @RequestParam(required = false, defaultValue = "10") Integer size) {
         if (text.isBlank()) return Collections.emptyList();
-        else return ItemMapper.toDtoList(itemService.searchItems(text));
+        else return ItemMapper.toDtoList(itemService.searchItems(
+                InfoFromRequest.getInfoFromRequestWithText(text, from, size)));
     }
 }

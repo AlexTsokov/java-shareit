@@ -131,7 +131,9 @@ public class ItemControllerTest {
                 .available(true)
                 .build();
 
-        when(itemService.searchItems("name")).thenReturn(List.of(item));
+        InfoFromRequest infoFromRequest = InfoFromRequest.getInfoFromRequestWithText("name", 0,10);
+
+        when(itemService.searchItems(infoFromRequest)).thenReturn(List.of(item));
 
         mockMvc.perform(get("/items/search")
                         .param("text", "name"))
