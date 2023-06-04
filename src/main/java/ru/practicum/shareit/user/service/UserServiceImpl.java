@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changeUser(Long id, User user) {
+    public User updateUser(Long id, User user) {
         User userForUpdate = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         if (user.getName() != null && !user.getName().isBlank()) {
             userForUpdate.setName(user.getName());

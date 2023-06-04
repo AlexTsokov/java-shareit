@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class BookingDtoWithItemName {
     private Long id;
     private LocalDateTime start;
