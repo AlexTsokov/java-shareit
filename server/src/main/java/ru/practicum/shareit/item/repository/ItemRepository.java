@@ -17,7 +17,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             " or upper(i.description) like concat('%', ?1, '%')) and i.available = true")
     List<Item> search(String text, Pageable pageable);
 
-    @Query(" select i from Item i where i.owner.id = ?1")
+    @Query(" select i from Item i where i.owner.id = ?1 order by i.name desc")
     List<Item> findItemsByOwner(Long ownerId, Pageable pageable);
 
     @Query(" select i from Item i where i.owner.id = ?1")

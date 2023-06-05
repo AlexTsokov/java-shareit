@@ -141,14 +141,14 @@ class ItemServiceImplTest {
         List<ItemDto> itemsFromDB = ItemMapper.toDtoList(itemRepository.findItemsByOwner(user.getId()));
 
         assertEquals(items.size(), 2);
-        assertEquals(items.get(0).getId(), itemsFromDB.get(0).getId());
-        assertEquals(items.get(0).getName(), itemsFromDB.get(0).getName());
-        assertEquals(items.get(0).getDescription(), itemsFromDB.get(0).getDescription());
-        assertEquals(items.get(0).getAvailable(), itemsFromDB.get(0).getAvailable());
-        assertEquals(items.get(1).getId(), itemsFromDB.get(1).getId());
-        assertEquals(items.get(1).getName(), itemsFromDB.get(1).getName());
-        assertEquals(items.get(1).getDescription(), itemsFromDB.get(1).getDescription());
-        assertEquals(items.get(1).getAvailable(), itemsFromDB.get(1).getAvailable());
+        assertEquals(items.get(1).getId(), itemsFromDB.get(0).getId());
+        assertEquals(items.get(1).getName(), itemsFromDB.get(0).getName());
+        assertEquals(items.get(1).getDescription(), itemsFromDB.get(0).getDescription());
+        assertEquals(items.get(1).getAvailable(), itemsFromDB.get(0).getAvailable());
+        assertEquals(items.get(0).getId(), itemsFromDB.get(1).getId());
+        assertEquals(items.get(0).getName(), itemsFromDB.get(1).getName());
+        assertEquals(items.get(0).getDescription(), itemsFromDB.get(1).getDescription());
+        assertEquals(items.get(0).getAvailable(), itemsFromDB.get(1).getAvailable());
     }
 
     @Test
