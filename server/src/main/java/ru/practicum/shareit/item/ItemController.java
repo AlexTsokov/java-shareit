@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.model.InfoFromRequest;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -46,8 +45,7 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam(name = "text") String text,
                                      @RequestParam(required = false, defaultValue = "0") Integer from,
                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
-        if (text.isBlank()) return Collections.emptyList();
-        else return ItemMapper.toDtoList(itemService.searchItems(
+        return ItemMapper.toDtoList(itemService.searchItems(
                 InfoFromRequest.getInfoFromRequestWithText(text, from, size)));
     }
 }

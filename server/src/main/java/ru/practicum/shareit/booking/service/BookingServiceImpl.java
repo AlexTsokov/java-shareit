@@ -39,7 +39,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoWithItemName createBooking(Long bookerId, BookingDto bookingDto) {
-        if (!validate(bookingDto)) throw new BookingNotFoundException("Бронирование невозможно");
         User user = userRepository.findById(bookerId).orElseThrow(EntityNotFoundException::new);
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(EntityNotFoundException::new);
         if (!item.getAvailable())
@@ -175,10 +174,4 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public boolean validate(BookingDto booking) {
-        LocalDateTime dateNow = LocalDateTime.now();
-        return booking.getEnd() != null && booking.getStart() != null && !booking.getEnd().isBefore(dateNow) &&
-                !booking.getStart().isBefore(LocalDateTime.now()) && booking.getStart().isBefore(booking.getEnd()) &&
-                !booking.getStart().isEqual(booking.getEnd());
-    }
 }

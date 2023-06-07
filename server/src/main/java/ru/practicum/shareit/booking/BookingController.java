@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.*;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.Valid;
 
 import java.util.List;
 
@@ -18,14 +16,14 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoWithItemName createBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                                @Valid @RequestBody BookingDto bookingDto) {
+                                                @RequestBody BookingDto bookingDto) {
         return bookingService.createBooking(bookerId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDtoWithItemName updateBooking(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                                 @PathVariable Long bookingId,
-                                                @NotBlank @RequestParam Boolean approved) {
+                                                @RequestParam Boolean approved) {
         return bookingService.updateBooking(ownerId, bookingId, approved);
     }
 

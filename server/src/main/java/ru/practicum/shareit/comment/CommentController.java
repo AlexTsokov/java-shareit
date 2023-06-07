@@ -6,7 +6,6 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.service.CommentService;
 
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/items")
@@ -18,7 +17,7 @@ public class CommentController {
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
                                  @PathVariable Long itemId,
-                                 @Valid @RequestBody CommentDto commentDto) {
+                                 @RequestBody CommentDto commentDto) {
         return CommentMapper.toCommentDto(commentService.addComment(userId, itemId, commentDto));
     }
 }

@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.BookingNotFoundException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -22,6 +24,7 @@ public class BookingController {
     @PostMapping
     ResponseEntity<Object> addBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                       @Valid @RequestBody BookingDto booking) {
+        if (!validate(booking)) throw new BookingNotFoundException("Бронирование невозможно");
         log.info("Принят запрос на бронь предмета от пользователя с айди: {}", bookerId);
         return bookingClient.addBooking(bookerId, booking);
     }
@@ -55,6 +58,13 @@ public class BookingController {
                                             @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Принят запрос на просмотр владельцем его бронирований");
         return bookingClient.getOwnerBookings(userId, state, from, size);
+    }
+
+    public boolean validate(BookingDto booking) {
+        LocalDateTime dateNow = LocalDateTime.now();
+        return booking.getEnd() != null && booking.getStart() != null && !booking.getEnd().isBefore(dateNow) &&
+                !booking.getStart().isBefore(LocalDateTime.now()) && booking.getStart().isBefore(booking.getEnd()) &&
+                !booking.getStart().isEqual(booking.getEnd());
     }
 
 }
